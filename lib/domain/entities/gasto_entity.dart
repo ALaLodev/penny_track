@@ -2,8 +2,8 @@ class GastoEntity {
   final String? id;
   final double cantidad;
   final String? descripcion;
-  final String? categoria;
-  final String? fecha;
+  final String categoria;
+  final DateTime? fecha;
 
   GastoEntity({
     required this.id,
@@ -18,7 +18,7 @@ class GastoEntity {
     double? cantidad,
     String? descripcion,
     String? categoria,
-    String? fecha,
+    DateTime? fecha,
   }) {
     return GastoEntity(
       id: id ?? this.id,
