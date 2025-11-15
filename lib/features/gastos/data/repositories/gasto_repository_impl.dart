@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import '../../../../domain/entities/gasto_entity.dart';
 import '../../../../domain/repositories/gasto_repository.dart';
 import '../datasources/app_database.dart'; // La DB
@@ -25,11 +26,11 @@ class GastoRepositoryImpl implements GastoRepository {
     final companion = toGastosCompanion(gasto);
 
     // 2. Insertar y obtener el ID
-    await _db.into(_db.gastos).insert(companion);
+    final gastoGenerado = await _db.into(_db.gastos).insertReturning(companion);
 
     // 3. Devolver la entidad original (si se necesita el ID generado, se necesita una lógica adicional de consulta)
     // Para simplificar, asumiremos que si viene sin ID, la DB lo generó correctamente.
-    return gasto;
+    return toGastoEntity(gastoGenerado);
   }
 
   @override
@@ -38,11 +39,21 @@ class GastoRepositoryImpl implements GastoRepository {
     await (_db.delete(_db.gastos)..where((t) => t.id.equals(id))).go();
   }
 
-  // Otros métodos (getGastosByRange) irían aquí...
   @override
-  Future<List<GastoEntity>> getGastosByRange(DateTime start, DateTime end) {
-    // Lógica avanzada de consulta en drift
-    // Simplificamos omitiendo el código de implementación por ahora
-    throw UnimplementedError();
+  Future<List<GastoEntity>> getGastosByRange(
+    DateTime start,
+    DateTime end,
+  ) async {
+    // Definimos la consulta (query)
+    final query = _db.select(_db.gastos)
+      ..where((tbl) {
+        return tbl.fecha.isNotNull() &
+            tbl.fecha.isBiggerOrEqual(Variable(start)) &
+            tbl.fecha.isSmallerOrEqual(Variable(end));
+      });
+
+    // Ejecutamos y mapeamos los resultados
+    final models = await query.get();
+    return models.map((model) => toGastoEntity(model)).toList();
   }
 }

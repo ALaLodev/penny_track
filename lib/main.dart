@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-// Importa el archivo de configuración de GetIt
-import 'core/config/service_locator.dart' as di; // di = dependency injection
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'core/config/service_locator.dart' as di;
+import 'core/config/router.dart';
+import 'features/gastos/presentation/cubits/lista_gastos_cubit.dart';
+import 'core/config/service_locator.dart';
 
 void main() async {
-  // Asegúrate de que Flutter esté inicializado
   WidgetsFlutterBinding.ensureInitialized();
-
-  // 💡 LLAMA A LA INICIALIZACIÓN DE DEPENDENCIAS
   await di.initLocator();
 
   runApp(const MyApp());
@@ -17,9 +17,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Aquí irá la configuración de GoRouter y los BlocProviders
-    return MaterialApp(
-      home: Scaffold(body: Center(child: Text('¡App Lista!'))),
+    return BlocProvider(
+      create: (context) => sl<ListaGastosCubit>()..cargarGastos(),
+
+      child: MaterialApp.router(
+        routerConfig: appRouter,
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        title: 'Gestor de Gastos',
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }

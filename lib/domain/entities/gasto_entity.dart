@@ -6,7 +6,7 @@ class GastoEntity {
   final DateTime? fecha;
 
   GastoEntity({
-    required this.id,
+    this.id,
     required this.cantidad,
     required this.descripcion,
     required this.categoria,
