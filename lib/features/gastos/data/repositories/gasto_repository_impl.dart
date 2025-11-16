@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import '../../../../domain/entities/gasto_entity.dart';
 import '../../../../domain/repositories/gasto_repository.dart';
-import '../datasources/app_database.dart'; // La DB
+import '../../../../core/data/datasources/app_database.dart'; // La DB
 import '../mappers/gasto_mapper.dart'; // Los mappers
 
 class GastoRepositoryImpl implements GastoRepository {

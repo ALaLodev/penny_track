@@ -1,6 +1,6 @@
 import '../../../../domain/entities/gasto_entity.dart';
-import '../datasources/app_database.dart';
-import 'package:drift/drift.dart'; // Importa el archivo de la DB para usar el modelo generado
+import '../../../../core/data/datasources/app_database.dart';
+import 'package:drift/drift.dart';
 
 // Convertir de DB Model (Gasto) a Domain Entity (GastoEntity)
 GastoEntity toGastoEntity(Gasto model) {
