@@ -28,8 +28,7 @@ class GastoRepositoryImpl implements GastoRepository {
     // 2. Insertar y obtener el ID
     final gastoGenerado = await _db.into(_db.gastos).insertReturning(companion);
 
-    // 3. Devolver la entidad original (si se necesita el ID generado, se necesita una lógica adicional de consulta)
-    // Para simplificar, asumiremos que si viene sin ID, la DB lo generó correctamente.
+    // 3. Devolver la entidad original y si viene sin ID, la DB lo genera.
     return toGastoEntity(gastoGenerado);
   }
 

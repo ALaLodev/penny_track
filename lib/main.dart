@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/config/service_locator.dart' as di;
 import 'core/config/router.dart';
 import 'features/gastos/presentation/cubits/lista_gastos_cubit.dart';
+import 'features/ingresos/presentation/cubits/lista_ingresos_cubit.dart';
 import 'core/config/service_locator.dart';
 
 void main() async {
@@ -17,8 +18,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<ListaGastosCubit>()..cargarGastos(),
+    // ENVOLVEMOS LA APP CON MultiBlocProvider
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              sl<ListaGastosCubit>()
+                ..cargarGastos(), // Cargamos gastos al inicio
+        ),
+        BlocProvider(
+          create: (context) =>
+              sl<ListaIngresosCubit>()
+                ..cargarIngresos(), // Cargamos ingresos al inicio
+        ),
+      ],
 
       child: MaterialApp.router(
         routerConfig: appRouter,

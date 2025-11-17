@@ -109,7 +109,7 @@ class _NuevoIngresoPageState extends State<NuevoIngresoPage> {
                 controller: _cantidadController,
                 decoration: const InputDecoration(
                   labelText: 'Cantidad',
-                  prefixText: '€ ',
+                  suffixText: '€ ',
                 ),
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -126,14 +126,13 @@ class _NuevoIngresoPageState extends State<NuevoIngresoPage> {
               ),
               const SizedBox(height: 16),
 
-              // 💡 13. --- CAMPO FUENTE ---
+              // --- CAMPO FUENTE ---
               DropdownButtonFormField<String>(
-                value: _fuenteSeleccionada,
+                initialValue: _fuenteSeleccionada,
                 decoration: const InputDecoration(
                   labelText: 'Fuente',
                   border: OutlineInputBorder(),
                 ),
-                // Mapea la lista de Strings a la lista de DropdownMenuItem
                 items: _fuentesDisponibles.map((String fuente) {
                   return DropdownMenuItem<String>(
                     value: fuente,
@@ -149,7 +148,6 @@ class _NuevoIngresoPageState extends State<NuevoIngresoPage> {
                   }
                 },
 
-                // Validación
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, selecciona una fuente';

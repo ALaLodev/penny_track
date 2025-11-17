@@ -1,7 +1,7 @@
 import '../entities/ingreso_entity.dart';
 import '../repositories/ingreso_repository.dart';
 
-// (Igual que con Gastos, creamos una clase para los parámetros)
+// Creamos una clase para los parámetros
 class GetIngresosByRangeParams {
   final DateTime start;
   final DateTime end;

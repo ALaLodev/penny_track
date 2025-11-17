@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart'; // Necesitarás 'intl' para formatear fechas
+import 'package:intl/intl.dart'; // Se necesita 'intl' para formatear fechas
 
-// Importamos la entidad y el Cubit
 import '../../../../domain/entities/gasto_entity.dart';
 import '../cubits/lista_gastos_cubit.dart';
 
@@ -110,7 +109,7 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
                 controller: _cantidadController,
                 decoration: const InputDecoration(
                   labelText: 'Cantidad',
-                  prefixText: '€ ',
+                  suffixText: '€ ',
                 ),
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -150,7 +149,6 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
                   }
                 },
 
-                // Validación
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, selecciona una categoría';

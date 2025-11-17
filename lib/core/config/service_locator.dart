@@ -18,7 +18,6 @@ import 'package:penny_track/domain/use_cases/save_ingreso_use_case.dart';
 import 'package:penny_track/domain/use_cases/delete_ingreso_use_case.dart';
 import 'package:penny_track/domain/use_cases/get_ingresos_by_range_use_case.dart';
 
-// 💡 1. IMPORTAR EL NUEVO CUBIT DE INGRESOS
 import 'package:penny_track/features/ingresos/presentation/cubits/lista_ingresos_cubit.dart';
 
 final sl = GetIt.instance; //sl = Service Locator
@@ -59,7 +58,7 @@ Future<void> initLocator() async {
     ),
   );
 
-  // 💡 2. REGISTRAR EL NUEVO CUBIT DE INGRESOS
+  // Cubit de Ingresos
   sl.registerFactory(
     () => ListaIngresosCubit(
       getIngresosUseCase: sl(),

@@ -30,23 +30,19 @@ class ListaIngresosPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          // 💡 Navega a la nueva ruta de INGRESO
           context.push(AppRoutes.nuevoIngreso);
         },
       ),
-      // 💡 Apunta al View de INGRESO
       body: const _ListaIngresosView(),
     );
   }
 }
 
-// 💡 Renombra el widget de Vista
 class _ListaIngresosView extends StatelessWidget {
   const _ListaIngresosView();
 
   @override
   Widget build(BuildContext context) {
-    // 💡 Escucha al Cubit y State de INGRESO
     return BlocBuilder<ListaIngresosCubit, ListaIngresosState>(
       builder: (context, state) {
         return state.when(
