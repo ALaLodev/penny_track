@@ -8,6 +8,8 @@ class ListaGastosView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return BlocBuilder<ListaGastosCubit, ListaGastosState>(
       builder: (context, state) {
         return state.when(
@@ -15,29 +17,57 @@ class ListaGastosView extends StatelessWidget {
           error: (mensaje) => Center(child: Text('Error: $mensaje')),
           loaded: (gastos) {
             if (gastos.isEmpty) {
-              return const Center(
-                child: Text('No hay gastos todavía. ¡Añade uno!'),
-              );
+              return const Center(child: Text('No hay gastos todavía.'));
             }
             return ListView.builder(
               itemCount: gastos.length,
+              padding: const EdgeInsets.all(16),
               itemBuilder: (context, index) {
                 final gasto = gastos[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    radius: 25,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text('${gasto.cantidad.toStringAsFixed(0)}€'),
+
+                // 💡 YA NO NECESITAMOS DEFINIR ESTILOS AQUÍ
+                // El Card tomará el color, sombra y bordes del AppTheme
+                return Card(
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
                     ),
-                  ),
-                  title: Text(gasto.descripcion ?? 'Sin descripción'),
-                  subtitle: Text(gasto.categoria),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.redAccent),
-                    onPressed: () {
-                      context.read<ListaGastosCubit>().eliminarGasto(gasto.id!);
-                    },
+                    leading: CircleAvatar(
+                      radius: 25,
+                      // Fondo suave rojizo para indicar gasto
+                      backgroundColor: colors.error.withValues(alpha: 0.3),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Text(
+                            '${gasto.cantidad.toStringAsFixed(0)}€',
+                            style: TextStyle(
+                              // Texto en rojo suave
+                              color: colors.error,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      gasto.descripcion ?? 'Sin descripción',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text(
+                      gasto.categoria,
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.delete_outline, color: colors.error),
+                      onPressed: () {
+                        context.read<ListaGastosCubit>().eliminarGasto(
+                          gasto.id!,
+                        );
+                      },
+                    ),
                   ),
                 );
               },

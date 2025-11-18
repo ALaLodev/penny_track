@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "774234185482",
+    "project_id": "penny-track-ec8b6",
+    "storage_bucket": "penny-track-ec8b6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:774234185482:android:cb3781a6da0ce680ba24f3",
+        "android_client_info": {
+          "package_name": "com.example.penny_track"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "774234185482-unj2tth2tn2r0tpehg3mpss4ckcv9rqn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCETMaVlp8BjCp01pAauPICFUS52DkP8yE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "774234185482-unj2tth2tn2r0tpehg3mpss4ckcv9rqn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

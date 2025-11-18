@@ -4,13 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:penny_track/core/config/router.dart';
 
+// Imports de features
 import 'package:penny_track/features/gastos/presentation/cubits/lista_gastos_cubit.dart';
 import 'package:penny_track/features/gastos/presentation/cubits/lista_gastos_state.dart';
 import 'package:penny_track/features/ingresos/presentation/cubits/lista_ingresos_cubit.dart';
 import 'package:penny_track/features/ingresos/presentation/cubits/lista_ingresos_state.dart';
-
 import 'package:penny_track/features/gastos/presentation/widgets/lista_gastos_view.dart';
 import 'package:penny_track/features/ingresos/presentation/widgets/lista_ingresos_view.dart';
+import 'package:penny_track/features/auth/presentation/cubits/auth_cubit.dart';
 
 enum TipoVista { gastos, ingresos }
 
@@ -34,63 +35,109 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Data providers
     final gastosState = context.watch<ListaGastosCubit>().state;
     final ingresosState = context.watch<ListaIngresosCubit>().state;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Penny Track'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: SegmentedButton<TipoVista>(
-              segments: const [
-                ButtonSegment(
-                  value: TipoVista.gastos,
-                  label: Text('Gastos'),
-                  icon: Icon(Icons.arrow_downward),
-                ),
-                ButtonSegment(
-                  value: TipoVista.ingresos,
-                  label: Text('Ingresos'),
-                  icon: Icon(Icons.arrow_upward),
-                ),
-              ],
-              selected: {_vistaActual},
-              onSelectionChanged: (Set<TipoVista> newSelection) {
-                setState(() {
-                  _vistaActual = newSelection.first;
-                });
+    // ENVOLVEMOS EL SCAFFOLD CON BLOCLISTENER
+    // Esto es crucial: escucha si el usuario se desconecta para echarlo al login
+    return BlocListener<AuthCubit, AuthState>(
+      listener: (context, state) {
+        if (state is AuthUnauthenticated) {
+          // Si el estado cambia a "No autenticado", vamos al Login
+          context.go(AppRoutes.login);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Mis Movimientos'),
+          // Logout
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.logout_rounded),
+              tooltip: 'Cerrar Sesión',
+              onPressed: () {
+                // Muestra diálogo de confirmación
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('¿Cerrar sesión?'),
+                    content: const Text(
+                      'Tendrás que volver a ingresar tus datos.',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context), // Cancelar
+                        child: const Text('Cancelar'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Cierra el  diálogo
+                          // Llamar al logout del Cubit
+                          context.read<AuthCubit>().logout();
+                        },
+                        child: Text(
+                          'Salir',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
               },
+            ),
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: SegmentedButton<TipoVista>(
+                segments: const [
+                  ButtonSegment(
+                    value: TipoVista.gastos,
+                    label: Text('Gastos'),
+                    icon: Icon(Icons.arrow_downward),
+                  ),
+                  ButtonSegment(
+                    value: TipoVista.ingresos,
+                    label: Text('Ingresos'),
+                    icon: Icon(Icons.arrow_upward),
+                  ),
+                ],
+                selected: {_vistaActual},
+                onSelectionChanged: (Set<TipoVista> newSelection) {
+                  setState(() {
+                    _vistaActual = newSelection.first;
+                  });
+                },
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onFabPressed,
-        child: const Icon(Icons.add),
-      ),
-
-      body: Column(
-        children: [
-          // Widget de resumen
-          _BalanceSummaryView(
-            gastosState: gastosState,
-            ingresosState: ingresosState,
-          ),
-          Expanded(
-            child: _vistaActual == TipoVista.gastos
-                ? const ListaGastosView()
-                : const ListaIngresosView(),
-          ),
-        ],
+        floatingActionButton: FloatingActionButton(
+          onPressed: _onFabPressed,
+          child: const Icon(Icons.add),
+        ),
+        body: Column(
+          children: [
+            _BalanceSummaryView(
+              gastosState: gastosState,
+              ingresosState: ingresosState,
+            ),
+            Expanded(
+              child: _vistaActual == TipoVista.gastos
+                  ? const ListaGastosView()
+                  : const ListaIngresosView(),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// --- Widget privado para el resumen del balance ---
 class _BalanceSummaryView extends StatelessWidget {
   final ListaGastosState gastosState;
   final ListaIngresosState ingresosState;
@@ -102,13 +149,11 @@ class _BalanceSummaryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Formateador de moneda
     final currencyFormatter = NumberFormat.currency(
       locale: 'es_ES',
       symbol: '€',
     );
 
-    // Usamos 'when' anidados para manejar todos los casos de forma segura con Freezed.
     return gastosState.when(
       loading: () => const _BalanceLoadingCard(),
       error: (msg) => _BalanceErrorCard(mensaje: msg),
@@ -116,8 +161,6 @@ class _BalanceSummaryView extends StatelessWidget {
         return ingresosState.when(
           loading: () => const _BalanceLoadingCard(),
           error: (msg) => _BalanceErrorCard(mensaje: msg),
-
-          // Si AMBOS están cargados (el "Happy Path")
           loaded: (ingresos) {
             final totalGastos = gastos.fold<double>(
               0.0,
@@ -129,7 +172,6 @@ class _BalanceSummaryView extends StatelessWidget {
             );
             final balance = totalIngresos - totalGastos;
 
-            // Devolvemos el widget con los datos
             return Card(
               margin: const EdgeInsets.all(12.0),
               elevation: 4,
@@ -146,7 +188,9 @@ class _BalanceSummaryView extends StatelessWidget {
                       currencyFormatter.format(balance),
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(
-                            color: balance >= 0 ? Colors.green : Colors.red,
+                            color: balance >= 0
+                                ? const Color(0xFF64FFDA)
+                                : const Color(0xFFCF6679),
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -157,13 +201,13 @@ class _BalanceSummaryView extends StatelessWidget {
                         _IncomeExpenseTile(
                           title: 'Ingresos',
                           amount: totalIngresos,
-                          color: Colors.green,
+                          color: const Color(0xFF64FFDA),
                           formatter: currencyFormatter,
                         ),
                         _IncomeExpenseTile(
                           title: 'Gastos',
                           amount: totalGastos,
-                          color: Colors.red,
+                          color: const Color(0xFFCF6679),
                           formatter: currencyFormatter,
                         ),
                       ],
@@ -179,15 +223,13 @@ class _BalanceSummaryView extends StatelessWidget {
   }
 }
 
-// --- Widgets auxiliares para el _BalanceSummaryView ---
-
 class _BalanceLoadingCard extends StatelessWidget {
   const _BalanceLoadingCard();
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(12.0),
-      child: const Padding(
+    return const Card(
+      margin: EdgeInsets.all(12.0),
+      child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Center(child: Text('Calculando balance...')),
       ),
@@ -202,13 +244,15 @@ class _BalanceErrorCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.all(12.0),
-      color: Colors.red.shade50,
+      color: Theme.of(context).colorScheme.errorContainer,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Text(
-            'Error al cargar balance: $mensaje',
-            style: TextStyle(color: Colors.red.shade900),
+            'Error: $mensaje',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onErrorContainer,
+            ),
           ),
         ),
       ),

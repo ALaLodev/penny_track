@@ -1,5 +1,5 @@
 import 'package:get_it/get_it.dart';
-import 'package:penny_track/core/data/datasources/app_database.dart'; // La DB
+import 'package:penny_track/core/data/datasources/app_database.dart';
 
 // --- GASTOS ---
 import 'package:penny_track/domain/repositories/gasto_repository.dart';
@@ -17,38 +17,43 @@ import 'package:penny_track/domain/use_cases/get_ingresos_use_case.dart';
 import 'package:penny_track/domain/use_cases/save_ingreso_use_case.dart';
 import 'package:penny_track/domain/use_cases/delete_ingreso_use_case.dart';
 import 'package:penny_track/domain/use_cases/get_ingresos_by_range_use_case.dart';
-
 import 'package:penny_track/features/ingresos/presentation/cubits/lista_ingresos_cubit.dart';
 
-final sl = GetIt.instance; //sl = Service Locator
+// 💡 --- AUTH (NUEVOS IMPORTS) ---
+import 'package:penny_track/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:penny_track/features/auth/domain/repositories/auth_repository.dart';
+import 'package:penny_track/features/auth/presentation/cubits/auth_cubit.dart';
 
-// Función que se llamará en main.dart
+final sl = GetIt.instance;
+
 Future<void> initLocator() async {
   // --- CORE ---
-  // (Usamos LazySingleton para la DB, es mejor que Singleton normal)
   sl.registerLazySingleton<AppDatabase>(() => AppDatabase());
 
-  // --- CAPA DATA (Repositorios) ---
+  // --- GASTOS ---
   sl.registerLazySingleton<GastoRepository>(() => GastoRepositoryImpl(sl()));
-  sl.registerLazySingleton<IngresoRepository>(
-    () => IngresoRepositoryImpl(sl()),
-  );
-
-  // --- CAPA DOMAIN (Use Cases - Gastos) ---
   sl.registerLazySingleton(() => GetGastosUseCase(sl()));
   sl.registerLazySingleton(() => SaveGastoUseCase(sl()));
   sl.registerLazySingleton(() => DeleteGastoUseCase(sl()));
   sl.registerLazySingleton(() => GetGastosByRangeUseCase(sl()));
 
-  // --- CAPA DOMAIN (Use Cases - Ingresos) ---
+  // --- INGRESOS ---
+  sl.registerLazySingleton<IngresoRepository>(
+    () => IngresoRepositoryImpl(sl()),
+  );
   sl.registerLazySingleton(() => GetIngresosUseCase(sl()));
   sl.registerLazySingleton(() => SaveIngresoUseCase(sl()));
   sl.registerLazySingleton(() => DeleteIngresoUseCase(sl()));
   sl.registerLazySingleton(() => GetIngresosByRangeUseCase(sl()));
 
-  // --- CAPA PRESENTATION (Blocs/Cubits) ---
+  // 💡 --- AUTH ---
+  // Repositorio de Auth
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl());
 
-  // Cubit de Gastos
+  // Auth Cubit
+  sl.registerFactory(() => AuthCubit(sl()));
+
+  // --- PRESENTATION (CUBITS) ---
   sl.registerFactory(
     () => ListaGastosCubit(
       getGastosUseCase: sl(),
@@ -58,7 +63,6 @@ Future<void> initLocator() async {
     ),
   );
 
-  // Cubit de Ingresos
   sl.registerFactory(
     () => ListaIngresosCubit(
       getIngresosUseCase: sl(),
