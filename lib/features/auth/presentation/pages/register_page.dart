@@ -88,7 +88,6 @@ class _RegisterPageState extends State<RegisterPage> {
               child: Container(
                 padding: const EdgeInsets.fromLTRB(30, 40, 30, 20),
                 decoration: BoxDecoration(
-                  // Color de tarjeta del tema (Gris Charcoal)
                   color: Theme.of(context).cardTheme.color,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(40),

@@ -26,7 +26,6 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
 
   AuthCubit(this._authRepository) : super(AuthInitial()) {
-    // Listener básico para cambios de sesión
     _authRepository.authStateChanges.listen((User? user) {
       if (user != null && state is! AuthAuthenticated) {
         emit(AuthAuthenticated(user));

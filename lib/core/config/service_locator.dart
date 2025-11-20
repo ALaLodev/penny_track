@@ -19,7 +19,7 @@ import 'package:penny_track/domain/use_cases/delete_ingreso_use_case.dart';
 import 'package:penny_track/domain/use_cases/get_ingresos_by_range_use_case.dart';
 import 'package:penny_track/features/ingresos/presentation/cubits/lista_ingresos_cubit.dart';
 
-// 💡 --- AUTH (NUEVOS IMPORTS) ---
+// 💡 --- AUTH ---
 import 'package:penny_track/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:penny_track/features/auth/domain/repositories/auth_repository.dart';
 import 'package:penny_track/features/auth/presentation/cubits/auth_cubit.dart';

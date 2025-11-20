@@ -25,8 +25,6 @@ class ListaGastosView extends StatelessWidget {
               itemBuilder: (context, index) {
                 final gasto = gastos[index];
 
-                // 💡 YA NO NECESITAMOS DEFINIR ESTILOS AQUÍ
-                // El Card tomará el color, sombra y bordes del AppTheme
                 return Card(
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(
@@ -35,7 +33,6 @@ class ListaGastosView extends StatelessWidget {
                     ),
                     leading: CircleAvatar(
                       radius: 25,
-                      // Fondo suave rojizo para indicar gasto
                       backgroundColor: colors.error.withValues(alpha: 0.3),
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
@@ -44,7 +41,6 @@ class ListaGastosView extends StatelessWidget {
                           child: Text(
                             '${gasto.cantidad.toStringAsFixed(0)}€',
                             style: TextStyle(
-                              // Texto en rojo suave
                               color: colors.error,
                               fontWeight: FontWeight.bold,
                             ),

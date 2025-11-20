@@ -25,7 +25,6 @@ class ListaIngresosView extends StatelessWidget {
               itemBuilder: (context, index) {
                 final ingreso = ingresos[index];
 
-                // Card limpio usando el tema global
                 return Card(
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(
@@ -34,7 +33,6 @@ class ListaIngresosView extends StatelessWidget {
                     ),
                     leading: CircleAvatar(
                       radius: 25,
-                      // Fondo suave menta para indicar ingreso
                       backgroundColor: colors.primary.withValues(alpha: 0.3),
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
@@ -43,7 +41,6 @@ class ListaIngresosView extends StatelessWidget {
                           child: Text(
                             '${ingreso.cantidad.toStringAsFixed(0)}€',
                             style: TextStyle(
-                              // Texto en color Menta (Primary)
                               color: colors.primary,
                               fontWeight: FontWeight.bold,
                             ),

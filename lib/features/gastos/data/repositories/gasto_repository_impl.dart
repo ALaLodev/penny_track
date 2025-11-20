@@ -11,24 +11,24 @@ class GastoRepositoryImpl implements GastoRepository {
 
   @override
   Future<List<GastoEntity>> getGastos() async {
-    // 1. Obtener los datos de la DB
+    // Obtener los datos de la DB
     final models = await _db
         .select(_db.gastos)
         .get(); // _db.gastos es la tabla generada
 
-    // 2. Mapear de modelos (drift) a entidades (domain)
+    // Mapear de modelos (drift) a entidades (domain)
     return models.map((model) => toGastoEntity(model)).toList();
   }
 
   @override
   Future<GastoEntity> saveGasto(GastoEntity gasto) async {
-    // 1. Convertir la entidad a un 'Companion' (formato de inserción de drift)
+    // Convertir la entidad a un 'Companion' (formato de inserción de drift)
     final companion = toGastosCompanion(gasto);
 
-    // 2. Insertar y obtener el ID
+    // Insertar y obtener el ID
     final gastoGenerado = await _db.into(_db.gastos).insertReturning(companion);
 
-    // 3. Devolver la entidad original y si viene sin ID, la DB lo genera.
+    // Devolver la entidad original y si viene sin ID, la DB lo genera.
     return toGastoEntity(gastoGenerado);
   }
 

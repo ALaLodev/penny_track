@@ -64,7 +64,7 @@ class _NuevoGastoPageState extends State<NuevoGastoPage> {
 
       // Crear la entidad
       final nuevoGasto = GastoEntity(
-        // id: null (drift/DB se encargará de generarlo)
+        // id: null (drift/DB se encarga de generarlo)
         cantidad: cantidad,
         descripcion: _descripcionController.text,
         fecha: _fechaSeleccionada,

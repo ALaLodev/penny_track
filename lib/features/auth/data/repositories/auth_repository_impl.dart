@@ -5,7 +5,6 @@ import '../../domain/repositories/auth_repository.dart';
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  // Asegúrate de que los scopes estén bien (necesario para versiones nuevas)
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
   @override
@@ -13,7 +12,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<User?> signInWithEmail(String email, String password) async {
-    // 💡 SIN TRY/CATCH AQUÍ. Dejamos que el error suba al Cubit.
     final credential = await _firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
@@ -23,11 +21,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<User?> signInWithGoogle() async {
-    // 💡 SIN TRY/CATCH AQUÍ.
-    // Si ocurre el error de Pigeon, subirá crudo y el Cubit lo interceptará.
-
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) return null; // Usuario canceló
+    if (googleUser == null) return null;
 
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;

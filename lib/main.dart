@@ -8,10 +8,12 @@ import 'core/config/router.dart';
 import 'features/gastos/presentation/cubits/lista_gastos_cubit.dart';
 import 'features/ingresos/presentation/cubits/lista_ingresos_cubit.dart';
 import 'core/config/service_locator.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await initializeDateFormatting('es_ES', null);
   await di.initLocator();
 
   runApp(const MyApp());

@@ -1,21 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-// 💡 Importa las dependencias de INGRESO
 import '../../../../domain/entities/ingreso_entity.dart';
 import '../../../../domain/use_cases/delete_ingreso_use_case.dart';
 import '../../../../domain/use_cases/get_ingresos_use_case.dart';
 import '../../../../domain/use_cases/save_ingreso_use_case.dart';
 import '../../../../domain/use_cases/get_ingresos_by_range_use_case.dart';
-import 'lista_ingresos_state.dart'; // 💡 Importa el estado de INGRESO
+import 'lista_ingresos_state.dart';
 
-// 💡 Renombra la clase
 class ListaIngresosCubit extends Cubit<ListaIngresosState> {
-  // 1. Dependencias (UseCases de Ingreso)
+  //  Dependencias (UseCases de Ingreso)
   final GetIngresosUseCase _getIngresosUseCase;
   final SaveIngresoUseCase _saveIngresoUseCase;
   final DeleteIngresoUseCase _deleteIngresoUseCase;
   final GetIngresosByRangeUseCase _getIngresosByRangeUseCase;
 
-  // 2. Constructor
+  // Constructor
   ListaIngresosCubit({
     required GetIngresosUseCase getIngresosUseCase,
     required SaveIngresoUseCase saveIngresoUseCase,

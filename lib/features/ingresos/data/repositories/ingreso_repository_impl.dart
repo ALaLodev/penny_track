@@ -46,8 +46,7 @@ class IngresoRepositoryImpl implements IngresoRepository {
 
   @override
   Future<List<IngresoEntity>> getIngresosByRange(DateTime start, DateTime end) {
-    // Implementa la lógica de rango si la necesitas
-    return getIngresos(); // Simplificado por ahora
+    return getIngresos();
   }
 
   @override

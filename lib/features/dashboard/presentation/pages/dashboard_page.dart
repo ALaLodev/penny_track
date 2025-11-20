@@ -40,7 +40,7 @@ class _DashboardPageState extends State<DashboardPage> {
     final ingresosState = context.watch<ListaIngresosCubit>().state;
 
     // ENVOLVEMOS EL SCAFFOLD CON BLOCLISTENER
-    // Esto es crucial: escucha si el usuario se desconecta para echarlo al login
+    // escucha si el usuario se desconecta para echarlo al login
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthUnauthenticated) {
@@ -53,6 +53,13 @@ class _DashboardPageState extends State<DashboardPage> {
           title: const Text('Mis Movimientos'),
           // Logout
           actions: [
+            IconButton(
+              icon: const Icon(Icons.pie_chart_outline),
+              tooltip: 'Ver Balance',
+              onPressed: () {
+                context.push(AppRoutes.balance);
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.logout_rounded),
               tooltip: 'Cerrar Sesión',

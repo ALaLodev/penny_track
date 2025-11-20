@@ -3,7 +3,7 @@ class IngresoEntity {
   final double cantidad;
   final String descripcion;
   final DateTime fecha;
-  final String fuente; // 'fuente' en lugar de 'categoria'
+  final String fuente;
 
   IngresoEntity({
     this.id,

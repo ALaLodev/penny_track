@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context); // Cerrar el sheet
+                  Navigator.pop(context);
                   context.read<AuthCubit>().loginEmail(
                     _emailController.text.trim(),
                     _passwordController.text.trim(),
@@ -81,16 +81,16 @@ class _LoginPageState extends State<LoginPage> {
       child: Scaffold(
         body: Column(
           children: [
-            // --- 1. MITAD SUPERIOR (LOGO) ---
+            // --- 1. MITAD SUPERIOR ---
             Expanded(
-              flex: 1, // Ocupa el 50%
+              flex: 1,
               child: Container(
                 width: double.infinity,
                 color: Theme.of(context).scaffoldBackgroundColor,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Placeholder del Logo (Lo cambiaremos por una imagen luego)
+                    // Placeholder del Logo
                     Icon(
                       Icons.account_balance_wallet,
                       size: 100,
@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
 
             // --- 2. MITAD INFERIOR (BOTONES) ---
             Expanded(
-              flex: 1, // Ocupa el otro 50%
+              flex: 1,
               child: Container(
                 padding: const EdgeInsets.all(30.0),
                 decoration: BoxDecoration(

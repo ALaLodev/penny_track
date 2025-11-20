@@ -7,7 +7,7 @@ import 'package:path/path.dart' as p;
 
 part 'app_database.g.dart';
 
-//Instanciar el objeto Uuid para poder llamar a v4()
+//Instancia el objeto Uuid para poder llamar a v4()
 const uuid = Uuid();
 
 class Gastos extends Table {

@@ -18,7 +18,6 @@ class _NuevoIngresoPageState extends State<NuevoIngresoPage> {
   final _cantidadController = TextEditingController();
   DateTime _fechaSeleccionada = DateTime.now();
 
-  // Definimos las "Fuentes" de ingreso
   final List<String> _fuentesDisponibles = [
     'Nómina',
     'Freelance',
@@ -64,7 +63,7 @@ class _NuevoIngresoPageState extends State<NuevoIngresoPage> {
 
       // Creamos una IngresoEntity
       final nuevoIngreso = IngresoEntity(
-        // id: null (drift/DB se encargará de generarlo)
+        // id: null (drift/DB se encarga de generarlo)
         cantidad: cantidad,
         descripcion: _descripcionController.text,
         fecha: _fechaSeleccionada,
