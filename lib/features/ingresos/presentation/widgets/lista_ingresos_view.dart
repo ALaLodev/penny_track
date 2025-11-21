@@ -21,7 +21,7 @@ class ListaIngresosView extends StatelessWidget {
             }
             return ListView.builder(
               itemCount: ingresos.length,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
               itemBuilder: (context, index) {
                 final ingreso = ingresos[index];
 

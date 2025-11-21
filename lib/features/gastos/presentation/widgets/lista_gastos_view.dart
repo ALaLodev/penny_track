@@ -21,7 +21,7 @@ class ListaGastosView extends StatelessWidget {
             }
             return ListView.builder(
               itemCount: gastos.length,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
               itemBuilder: (context, index) {
                 final gasto = gastos[index];
 

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:penny_track/features/gastos/presentation/cubits/lista_gastos_cubit.dart';
+import 'package:penny_track/features/gastos/presentation/cubits/lista_gastos_state.dart';
 import 'package:penny_track/features/ingresos/presentation/cubits/lista_ingresos_cubit.dart';
+import 'package:penny_track/features/ingresos/presentation/cubits/lista_ingresos_state.dart';
 
 class BalancePage extends StatefulWidget {
   const BalancePage({super.key});

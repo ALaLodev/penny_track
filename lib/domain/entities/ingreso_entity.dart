@@ -1,5 +1,6 @@
 class IngresoEntity {
   final String? id;
+  final String? userId;
   final double cantidad;
   final String descripcion;
   final DateTime fecha;
@@ -7,6 +8,7 @@ class IngresoEntity {
 
   IngresoEntity({
     this.id,
+    this.userId,
     required this.cantidad,
     required this.descripcion,
     required this.fecha,
@@ -15,6 +17,7 @@ class IngresoEntity {
 
   IngresoEntity copyWith({
     String? id,
+    String? userId,
     double? cantidad,
     String? descripcion,
     String? fuente,
@@ -22,6 +25,7 @@ class IngresoEntity {
   }) {
     return IngresoEntity(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       cantidad: cantidad ?? this.cantidad,
       descripcion: descripcion ?? this.descripcion,
       fuente: fuente ?? this.fuente,

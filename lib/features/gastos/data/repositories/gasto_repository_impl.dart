@@ -1,40 +1,71 @@
 import 'package:drift/drift.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // 💡 1. Importar Firebase
 import '../../../../domain/entities/gasto_entity.dart';
 import '../../../../domain/repositories/gasto_repository.dart';
-import '../../../../core/data/datasources/app_database.dart'; // La DB
-import '../mappers/gasto_mapper.dart'; // Los mappers
+import '../../../../core/data/datasources/app_database.dart';
 
 class GastoRepositoryImpl implements GastoRepository {
-  final AppDatabase _db; // Drift DB inyectada
+  final AppDatabase _db;
 
   GastoRepositoryImpl(this._db);
 
+  // 💡 2. Getter para obtener el ID del usuario actual
+  String? get _userId => FirebaseAuth.instance.currentUser?.uid;
+
+  // --- MAPEADORES INTERNOS (Para asegurar el manejo del userId) ---
+
+  GastoEntity _toEntity(Gasto model) {
+    return GastoEntity(
+      id: model.id,
+      userId: model.userId, // Mapeamos el usuario
+      cantidad: model.cantidad,
+      descripcion: model.descripcion,
+      fecha: model.fecha,
+      categoria: model.categoria,
+    );
+  }
+
+  GastosCompanion _toCompanion(GastoEntity entity) {
+    return GastosCompanion(
+      id: entity.id != null ? Value(entity.id!) : const Value.absent(),
+      // 💡 3. INYECTAR USER ID: Usamos el de la entidad O el del usuario logueado
+      userId: Value(entity.userId ?? _userId),
+      cantidad: Value(entity.cantidad),
+      descripcion: Value(entity.descripcion ?? 'Sin descripción'),
+      fecha: Value(entity.fecha ?? DateTime.now()),
+      categoria: Value(entity.categoria),
+    );
+  }
+
+  // --- IMPLEMENTACIÓN DE MÉTODOS ---
+
   @override
   Future<List<GastoEntity>> getGastos() async {
-    // Obtener los datos de la DB
-    final models = await _db
-        .select(_db.gastos)
-        .get(); // _db.gastos es la tabla generada
+    final uid = _userId;
+    if (uid == null) return []; // Si no hay usuario, lista vacía
 
-    // Mapear de modelos (drift) a entidades (domain)
-    return models.map((model) => toGastoEntity(model)).toList();
+    // 💡 4. FILTRAR POR USUARIO
+    final query = _db.select(_db.gastos)
+      ..where((tbl) => tbl.userId.equals(uid));
+
+    final models = await query.get();
+    return models.map(_toEntity).toList();
   }
 
   @override
   Future<GastoEntity> saveGasto(GastoEntity gasto) async {
-    // Convertir la entidad a un 'Companion' (formato de inserción de drift)
-    final companion = toGastosCompanion(gasto);
+    // Convertimos a Companion (aquí se inyecta el userId automáticamente)
+    final companion = _toCompanion(gasto);
 
-    // Insertar y obtener el ID
+    // Insertamos y recuperamos el dato guardado
     final gastoGenerado = await _db.into(_db.gastos).insertReturning(companion);
 
-    // Devolver la entidad original y si viene sin ID, la DB lo genera.
-    return toGastoEntity(gastoGenerado);
+    return _toEntity(gastoGenerado);
   }
 
   @override
   Future<void> deleteGasto(String id) async {
-    // Definimos una 'query' para borrar
+    // Borramos asegurándonos de que coincida el ID
     await (_db.delete(_db.gastos)..where((t) => t.id.equals(id))).go();
   }
 
@@ -43,16 +74,18 @@ class GastoRepositoryImpl implements GastoRepository {
     DateTime start,
     DateTime end,
   ) async {
-    // Definimos la consulta (query)
+    final uid = _userId;
+    if (uid == null) return [];
+
     final query = _db.select(_db.gastos)
       ..where((tbl) {
-        return tbl.fecha.isNotNull() &
+        // 💡 5. FILTRAR POR USUARIO Y POR FECHA
+        return tbl.userId.equals(uid) & // Filtro de usuario
             tbl.fecha.isBiggerOrEqual(Variable(start)) &
             tbl.fecha.isSmallerOrEqual(Variable(end));
       });
 
-    // Ejecutamos y mapeamos los resultados
     final models = await query.get();
-    return models.map((model) => toGastoEntity(model)).toList();
+    return models.map(_toEntity).toList();
   }
 }

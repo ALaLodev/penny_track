@@ -19,6 +19,15 @@ class $GastosTable extends Gastos with TableInfo<$GastosTable, Gasto> {
     requiredDuringInsert: false,
     clientDefault: () => uuid.v4(),
   );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _cantidadMeta = const VerificationMeta(
     'cantidad',
   );
@@ -65,6 +74,7 @@ class $GastosTable extends Gastos with TableInfo<$GastosTable, Gasto> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    userId,
     cantidad,
     descripcion,
     fecha,
@@ -84,6 +94,12 @@ class $GastosTable extends Gastos with TableInfo<$GastosTable, Gasto> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
     }
     if (data.containsKey('cantidad')) {
       context.handle(
@@ -133,6 +149,10 @@ class $GastosTable extends Gastos with TableInfo<$GastosTable, Gasto> {
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      ),
       cantidad: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}cantidad'],
@@ -160,12 +180,14 @@ class $GastosTable extends Gastos with TableInfo<$GastosTable, Gasto> {
 
 class Gasto extends DataClass implements Insertable<Gasto> {
   final String id;
+  final String? userId;
   final double cantidad;
   final String descripcion;
   final DateTime fecha;
   final String categoria;
   const Gasto({
     required this.id,
+    this.userId,
     required this.cantidad,
     required this.descripcion,
     required this.fecha,
@@ -175,6 +197,9 @@ class Gasto extends DataClass implements Insertable<Gasto> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<String>(userId);
+    }
     map['cantidad'] = Variable<double>(cantidad);
     map['descripcion'] = Variable<String>(descripcion);
     map['fecha'] = Variable<DateTime>(fecha);
@@ -185,6 +210,9 @@ class Gasto extends DataClass implements Insertable<Gasto> {
   GastosCompanion toCompanion(bool nullToAbsent) {
     return GastosCompanion(
       id: Value(id),
+      userId: userId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(userId),
       cantidad: Value(cantidad),
       descripcion: Value(descripcion),
       fecha: Value(fecha),
@@ -199,6 +227,7 @@ class Gasto extends DataClass implements Insertable<Gasto> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Gasto(
       id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String?>(json['userId']),
       cantidad: serializer.fromJson<double>(json['cantidad']),
       descripcion: serializer.fromJson<String>(json['descripcion']),
       fecha: serializer.fromJson<DateTime>(json['fecha']),
@@ -210,6 +239,7 @@ class Gasto extends DataClass implements Insertable<Gasto> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String?>(userId),
       'cantidad': serializer.toJson<double>(cantidad),
       'descripcion': serializer.toJson<String>(descripcion),
       'fecha': serializer.toJson<DateTime>(fecha),
@@ -219,12 +249,14 @@ class Gasto extends DataClass implements Insertable<Gasto> {
 
   Gasto copyWith({
     String? id,
+    Value<String?> userId = const Value.absent(),
     double? cantidad,
     String? descripcion,
     DateTime? fecha,
     String? categoria,
   }) => Gasto(
     id: id ?? this.id,
+    userId: userId.present ? userId.value : this.userId,
     cantidad: cantidad ?? this.cantidad,
     descripcion: descripcion ?? this.descripcion,
     fecha: fecha ?? this.fecha,
@@ -233,6 +265,7 @@ class Gasto extends DataClass implements Insertable<Gasto> {
   Gasto copyWithCompanion(GastosCompanion data) {
     return Gasto(
       id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
       cantidad: data.cantidad.present ? data.cantidad.value : this.cantidad,
       descripcion: data.descripcion.present
           ? data.descripcion.value
@@ -246,6 +279,7 @@ class Gasto extends DataClass implements Insertable<Gasto> {
   String toString() {
     return (StringBuffer('Gasto(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('cantidad: $cantidad, ')
           ..write('descripcion: $descripcion, ')
           ..write('fecha: $fecha, ')
@@ -255,12 +289,14 @@ class Gasto extends DataClass implements Insertable<Gasto> {
   }
 
   @override
-  int get hashCode => Object.hash(id, cantidad, descripcion, fecha, categoria);
+  int get hashCode =>
+      Object.hash(id, userId, cantidad, descripcion, fecha, categoria);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Gasto &&
           other.id == this.id &&
+          other.userId == this.userId &&
           other.cantidad == this.cantidad &&
           other.descripcion == this.descripcion &&
           other.fecha == this.fecha &&
@@ -269,6 +305,7 @@ class Gasto extends DataClass implements Insertable<Gasto> {
 
 class GastosCompanion extends UpdateCompanion<Gasto> {
   final Value<String> id;
+  final Value<String?> userId;
   final Value<double> cantidad;
   final Value<String> descripcion;
   final Value<DateTime> fecha;
@@ -276,6 +313,7 @@ class GastosCompanion extends UpdateCompanion<Gasto> {
   final Value<int> rowid;
   const GastosCompanion({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     this.cantidad = const Value.absent(),
     this.descripcion = const Value.absent(),
     this.fecha = const Value.absent(),
@@ -284,6 +322,7 @@ class GastosCompanion extends UpdateCompanion<Gasto> {
   });
   GastosCompanion.insert({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     required double cantidad,
     required String descripcion,
     required DateTime fecha,
@@ -295,6 +334,7 @@ class GastosCompanion extends UpdateCompanion<Gasto> {
        categoria = Value(categoria);
   static Insertable<Gasto> custom({
     Expression<String>? id,
+    Expression<String>? userId,
     Expression<double>? cantidad,
     Expression<String>? descripcion,
     Expression<DateTime>? fecha,
@@ -303,6 +343,7 @@ class GastosCompanion extends UpdateCompanion<Gasto> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
       if (cantidad != null) 'cantidad': cantidad,
       if (descripcion != null) 'descripcion': descripcion,
       if (fecha != null) 'fecha': fecha,
@@ -313,6 +354,7 @@ class GastosCompanion extends UpdateCompanion<Gasto> {
 
   GastosCompanion copyWith({
     Value<String>? id,
+    Value<String?>? userId,
     Value<double>? cantidad,
     Value<String>? descripcion,
     Value<DateTime>? fecha,
@@ -321,6 +363,7 @@ class GastosCompanion extends UpdateCompanion<Gasto> {
   }) {
     return GastosCompanion(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       cantidad: cantidad ?? this.cantidad,
       descripcion: descripcion ?? this.descripcion,
       fecha: fecha ?? this.fecha,
@@ -334,6 +377,9 @@ class GastosCompanion extends UpdateCompanion<Gasto> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
     }
     if (cantidad.present) {
       map['cantidad'] = Variable<double>(cantidad.value);
@@ -357,6 +403,7 @@ class GastosCompanion extends UpdateCompanion<Gasto> {
   String toString() {
     return (StringBuffer('GastosCompanion(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('cantidad: $cantidad, ')
           ..write('descripcion: $descripcion, ')
           ..write('fecha: $fecha, ')
@@ -382,6 +429,15 @@ class $IngresosTable extends Ingresos with TableInfo<$IngresosTable, Ingreso> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
     clientDefault: () => uuid.v4(),
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _cantidadMeta = const VerificationMeta(
     'cantidad',
@@ -426,6 +482,7 @@ class $IngresosTable extends Ingresos with TableInfo<$IngresosTable, Ingreso> {
   @override
   List<GeneratedColumn> get $columns => [
     id,
+    userId,
     cantidad,
     descripcion,
     fecha,
@@ -445,6 +502,12 @@ class $IngresosTable extends Ingresos with TableInfo<$IngresosTable, Ingreso> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
     }
     if (data.containsKey('cantidad')) {
       context.handle(
@@ -494,6 +557,10 @@ class $IngresosTable extends Ingresos with TableInfo<$IngresosTable, Ingreso> {
         DriftSqlType.string,
         data['${effectivePrefix}id'],
       )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      ),
       cantidad: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}cantidad'],
@@ -521,12 +588,14 @@ class $IngresosTable extends Ingresos with TableInfo<$IngresosTable, Ingreso> {
 
 class Ingreso extends DataClass implements Insertable<Ingreso> {
   final String id;
+  final String? userId;
   final double cantidad;
   final String descripcion;
   final DateTime fecha;
   final String fuente;
   const Ingreso({
     required this.id,
+    this.userId,
     required this.cantidad,
     required this.descripcion,
     required this.fecha,
@@ -536,6 +605,9 @@ class Ingreso extends DataClass implements Insertable<Ingreso> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<String>(userId);
+    }
     map['cantidad'] = Variable<double>(cantidad);
     map['descripcion'] = Variable<String>(descripcion);
     map['fecha'] = Variable<DateTime>(fecha);
@@ -546,6 +618,9 @@ class Ingreso extends DataClass implements Insertable<Ingreso> {
   IngresosCompanion toCompanion(bool nullToAbsent) {
     return IngresosCompanion(
       id: Value(id),
+      userId: userId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(userId),
       cantidad: Value(cantidad),
       descripcion: Value(descripcion),
       fecha: Value(fecha),
@@ -560,6 +635,7 @@ class Ingreso extends DataClass implements Insertable<Ingreso> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return Ingreso(
       id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String?>(json['userId']),
       cantidad: serializer.fromJson<double>(json['cantidad']),
       descripcion: serializer.fromJson<String>(json['descripcion']),
       fecha: serializer.fromJson<DateTime>(json['fecha']),
@@ -571,6 +647,7 @@ class Ingreso extends DataClass implements Insertable<Ingreso> {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String?>(userId),
       'cantidad': serializer.toJson<double>(cantidad),
       'descripcion': serializer.toJson<String>(descripcion),
       'fecha': serializer.toJson<DateTime>(fecha),
@@ -580,12 +657,14 @@ class Ingreso extends DataClass implements Insertable<Ingreso> {
 
   Ingreso copyWith({
     String? id,
+    Value<String?> userId = const Value.absent(),
     double? cantidad,
     String? descripcion,
     DateTime? fecha,
     String? fuente,
   }) => Ingreso(
     id: id ?? this.id,
+    userId: userId.present ? userId.value : this.userId,
     cantidad: cantidad ?? this.cantidad,
     descripcion: descripcion ?? this.descripcion,
     fecha: fecha ?? this.fecha,
@@ -594,6 +673,7 @@ class Ingreso extends DataClass implements Insertable<Ingreso> {
   Ingreso copyWithCompanion(IngresosCompanion data) {
     return Ingreso(
       id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
       cantidad: data.cantidad.present ? data.cantidad.value : this.cantidad,
       descripcion: data.descripcion.present
           ? data.descripcion.value
@@ -607,6 +687,7 @@ class Ingreso extends DataClass implements Insertable<Ingreso> {
   String toString() {
     return (StringBuffer('Ingreso(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('cantidad: $cantidad, ')
           ..write('descripcion: $descripcion, ')
           ..write('fecha: $fecha, ')
@@ -616,12 +697,14 @@ class Ingreso extends DataClass implements Insertable<Ingreso> {
   }
 
   @override
-  int get hashCode => Object.hash(id, cantidad, descripcion, fecha, fuente);
+  int get hashCode =>
+      Object.hash(id, userId, cantidad, descripcion, fecha, fuente);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is Ingreso &&
           other.id == this.id &&
+          other.userId == this.userId &&
           other.cantidad == this.cantidad &&
           other.descripcion == this.descripcion &&
           other.fecha == this.fecha &&
@@ -630,6 +713,7 @@ class Ingreso extends DataClass implements Insertable<Ingreso> {
 
 class IngresosCompanion extends UpdateCompanion<Ingreso> {
   final Value<String> id;
+  final Value<String?> userId;
   final Value<double> cantidad;
   final Value<String> descripcion;
   final Value<DateTime> fecha;
@@ -637,6 +721,7 @@ class IngresosCompanion extends UpdateCompanion<Ingreso> {
   final Value<int> rowid;
   const IngresosCompanion({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     this.cantidad = const Value.absent(),
     this.descripcion = const Value.absent(),
     this.fecha = const Value.absent(),
@@ -645,6 +730,7 @@ class IngresosCompanion extends UpdateCompanion<Ingreso> {
   });
   IngresosCompanion.insert({
     this.id = const Value.absent(),
+    this.userId = const Value.absent(),
     required double cantidad,
     required String descripcion,
     required DateTime fecha,
@@ -656,6 +742,7 @@ class IngresosCompanion extends UpdateCompanion<Ingreso> {
        fuente = Value(fuente);
   static Insertable<Ingreso> custom({
     Expression<String>? id,
+    Expression<String>? userId,
     Expression<double>? cantidad,
     Expression<String>? descripcion,
     Expression<DateTime>? fecha,
@@ -664,6 +751,7 @@ class IngresosCompanion extends UpdateCompanion<Ingreso> {
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
       if (cantidad != null) 'cantidad': cantidad,
       if (descripcion != null) 'descripcion': descripcion,
       if (fecha != null) 'fecha': fecha,
@@ -674,6 +762,7 @@ class IngresosCompanion extends UpdateCompanion<Ingreso> {
 
   IngresosCompanion copyWith({
     Value<String>? id,
+    Value<String?>? userId,
     Value<double>? cantidad,
     Value<String>? descripcion,
     Value<DateTime>? fecha,
@@ -682,6 +771,7 @@ class IngresosCompanion extends UpdateCompanion<Ingreso> {
   }) {
     return IngresosCompanion(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       cantidad: cantidad ?? this.cantidad,
       descripcion: descripcion ?? this.descripcion,
       fecha: fecha ?? this.fecha,
@@ -695,6 +785,9 @@ class IngresosCompanion extends UpdateCompanion<Ingreso> {
     final map = <String, Expression>{};
     if (id.present) {
       map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
     }
     if (cantidad.present) {
       map['cantidad'] = Variable<double>(cantidad.value);
@@ -718,6 +811,7 @@ class IngresosCompanion extends UpdateCompanion<Ingreso> {
   String toString() {
     return (StringBuffer('IngresosCompanion(')
           ..write('id: $id, ')
+          ..write('userId: $userId, ')
           ..write('cantidad: $cantidad, ')
           ..write('descripcion: $descripcion, ')
           ..write('fecha: $fecha, ')
@@ -743,6 +837,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 typedef $$GastosTableCreateCompanionBuilder =
     GastosCompanion Function({
       Value<String> id,
+      Value<String?> userId,
       required double cantidad,
       required String descripcion,
       required DateTime fecha,
@@ -752,6 +847,7 @@ typedef $$GastosTableCreateCompanionBuilder =
 typedef $$GastosTableUpdateCompanionBuilder =
     GastosCompanion Function({
       Value<String> id,
+      Value<String?> userId,
       Value<double> cantidad,
       Value<String> descripcion,
       Value<DateTime> fecha,
@@ -770,6 +866,11 @@ class $$GastosTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -808,6 +909,11 @@ class $$GastosTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get cantidad => $composableBuilder(
     column: $table.cantidad,
     builder: (column) => ColumnOrderings(column),
@@ -840,6 +946,9 @@ class $$GastosTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
 
   GeneratedColumn<double> get cantidad =>
       $composableBuilder(column: $table.cantidad, builder: (column) => column);
@@ -885,6 +994,7 @@ class $$GastosTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String?> userId = const Value.absent(),
                 Value<double> cantidad = const Value.absent(),
                 Value<String> descripcion = const Value.absent(),
                 Value<DateTime> fecha = const Value.absent(),
@@ -892,6 +1002,7 @@ class $$GastosTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => GastosCompanion(
                 id: id,
+                userId: userId,
                 cantidad: cantidad,
                 descripcion: descripcion,
                 fecha: fecha,
@@ -901,6 +1012,7 @@ class $$GastosTableTableManager
           createCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String?> userId = const Value.absent(),
                 required double cantidad,
                 required String descripcion,
                 required DateTime fecha,
@@ -908,6 +1020,7 @@ class $$GastosTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => GastosCompanion.insert(
                 id: id,
+                userId: userId,
                 cantidad: cantidad,
                 descripcion: descripcion,
                 fecha: fecha,
@@ -939,6 +1052,7 @@ typedef $$GastosTableProcessedTableManager =
 typedef $$IngresosTableCreateCompanionBuilder =
     IngresosCompanion Function({
       Value<String> id,
+      Value<String?> userId,
       required double cantidad,
       required String descripcion,
       required DateTime fecha,
@@ -948,6 +1062,7 @@ typedef $$IngresosTableCreateCompanionBuilder =
 typedef $$IngresosTableUpdateCompanionBuilder =
     IngresosCompanion Function({
       Value<String> id,
+      Value<String?> userId,
       Value<double> cantidad,
       Value<String> descripcion,
       Value<DateTime> fecha,
@@ -966,6 +1081,11 @@ class $$IngresosTableFilterComposer
   });
   ColumnFilters<String> get id => $composableBuilder(
     column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -1004,6 +1124,11 @@ class $$IngresosTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get cantidad => $composableBuilder(
     column: $table.cantidad,
     builder: (column) => ColumnOrderings(column),
@@ -1036,6 +1161,9 @@ class $$IngresosTableAnnotationComposer
   });
   GeneratedColumn<String> get id =>
       $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
 
   GeneratedColumn<double> get cantidad =>
       $composableBuilder(column: $table.cantidad, builder: (column) => column);
@@ -1081,6 +1209,7 @@ class $$IngresosTableTableManager
           updateCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String?> userId = const Value.absent(),
                 Value<double> cantidad = const Value.absent(),
                 Value<String> descripcion = const Value.absent(),
                 Value<DateTime> fecha = const Value.absent(),
@@ -1088,6 +1217,7 @@ class $$IngresosTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => IngresosCompanion(
                 id: id,
+                userId: userId,
                 cantidad: cantidad,
                 descripcion: descripcion,
                 fecha: fecha,
@@ -1097,6 +1227,7 @@ class $$IngresosTableTableManager
           createCompanionCallback:
               ({
                 Value<String> id = const Value.absent(),
+                Value<String?> userId = const Value.absent(),
                 required double cantidad,
                 required String descripcion,
                 required DateTime fecha,
@@ -1104,6 +1235,7 @@ class $$IngresosTableTableManager
                 Value<int> rowid = const Value.absent(),
               }) => IngresosCompanion.insert(
                 id: id,
+                userId: userId,
                 cantidad: cantidad,
                 descripcion: descripcion,
                 fecha: fecha,

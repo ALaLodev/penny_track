@@ -1,5 +1,6 @@
 class GastoEntity {
   final String? id;
+  final String? userId;
   final double cantidad;
   final String? descripcion;
   final String categoria;
@@ -7,6 +8,7 @@ class GastoEntity {
 
   GastoEntity({
     this.id,
+    this.userId,
     required this.cantidad,
     required this.descripcion,
     required this.categoria,
@@ -15,6 +17,7 @@ class GastoEntity {
 
   GastoEntity copyWith({
     String? id,
+    String? userId,
     double? cantidad,
     String? descripcion,
     String? categoria,
@@ -22,6 +25,7 @@ class GastoEntity {
   }) {
     return GastoEntity(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       cantidad: cantidad ?? this.cantidad,
       descripcion: descripcion ?? this.descripcion,
       categoria: categoria ?? this.categoria,

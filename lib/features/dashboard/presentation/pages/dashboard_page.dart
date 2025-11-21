@@ -25,6 +25,18 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   TipoVista _vistaActual = TipoVista.gastos;
 
+  @override
+  void initState() {
+    super.initState();
+    // Forzamos la recarga de datos cada vez que se entra a esta pantalla.
+    // Como esta pantalla solo se carga tras el login, esto asegura
+    // que se lean los datos del usuario ACTUAL (y no del anterior).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ListaGastosCubit>().cargarGastos();
+      context.read<ListaIngresosCubit>().cargarIngresos();
+    });
+  }
+
   void _onFabPressed() {
     if (_vistaActual == TipoVista.gastos) {
       context.push(AppRoutes.nuevoGasto);
@@ -51,7 +63,7 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Mis Movimientos'),
-          // Logout
+          // Balance
           actions: [
             IconButton(
               icon: const Icon(Icons.pie_chart_outline),
@@ -60,11 +72,11 @@ class _DashboardPageState extends State<DashboardPage> {
                 context.push(AppRoutes.balance);
               },
             ),
+            // Logout
             IconButton(
               icon: const Icon(Icons.logout_rounded),
               tooltip: 'Cerrar Sesión',
               onPressed: () {
-                // Muestra diálogo de confirmación
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -74,13 +86,12 @@ class _DashboardPageState extends State<DashboardPage> {
                     ),
                     actions: [
                       TextButton(
-                        onPressed: () => Navigator.pop(context), // Cancelar
+                        onPressed: () => Navigator.pop(context),
                         child: const Text('Cancelar'),
                       ),
                       TextButton(
                         onPressed: () {
-                          Navigator.pop(context); // Cierra el  diálogo
-                          // Llamar al logout del Cubit
+                          Navigator.pop(context);
                           context.read<AuthCubit>().logout();
                         },
                         child: Text(
