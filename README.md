@@ -43,14 +43,15 @@ This ensures separation of concerns, decouples business logic from UI, and enhan
 ### Directory Structure
 
 lib/
-├── core/ # Cross-cutting configuration (Router, Theme, DI, DB, Utils)
-├── domain/ # Pure Business Rules (Entities and Contracts)
+├── core/                  # Cross-cutting configuration (Router, Theme, DI, DB, Utils)
+├── domain/                # Pure Business Rules (Entities and Contracts)
 ├── features/
-│ ├── auth/ # Authentication Logic (Cubit, Repo, UI)
-│ ├── dashboard/ # Main screen orchestrator and Charts
-│ ├── gastos/ # Complete Expenses Feature (Data, Domain, Presentation)
-│ └── ingresos/ # Complete Incomes Feature
-└── main.dart # Entry point and dependency injection
+│   ├── auth/              # Authentication Logic (Cubit, Repo, UI)
+│   ├── dashboard/         # Main screen orchestrator and Charts
+│   ├── gastos/            # Complete Expenses Feature (Data, Domain, Presentation)
+│   └── ingresos/          # Complete Incomes Feature
+└── main.dart              # Entry point and dependency injection
+
 
 
 ---
@@ -169,6 +170,7 @@ lib/
 │   ├── gastos/            # Feature completa de Gastos (Data, Domain, Presentation)
 │   └── ingresos/          # Feature completa de Ingresos
 └── main.dart              # Punto de entrada e inyección de dependencias
+
 
 # 📐 Patrones de Diseño Implementados
 
