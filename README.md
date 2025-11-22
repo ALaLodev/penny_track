@@ -8,11 +8,9 @@ La aplicación permite registrar movimientos financieros, visualizar balances me
 
 ## 📱 Galería
 
-| Login / Registro | Dashboard (Gastos) | Dashboard (Ingresos) | Balance Mensual |
-|:---:|:---:|:---:|:---:|
-| <img src="assets/screenshots/Login.png" width="200" /> | <img src="assets/screenshots/Create_Acount2.png" width="200" /> | <img src="assets/screenshots/Home.png" width="200" /> | <img src="assets/screenshots/Incomes.png" width="200" /> | <img src="assets/screenshots/Pie.png" width="200" /> |
-
-*(Nota: Las imágenes son demostrativas del flujo de la aplicación)*
+| Login | Registro | Dashboard (Gastos) | Dashboard (Ingresos) | Balance Mensual |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="/lib/assets/screenshots/Login.png" width="200" /> | <img src="/lib/assets/screenshots/Create_Acount2.png" width="200" /> | <img src="/lib/assets/screenshots/Home.png" width="200" /> | <img src="/lib/assets/screenshots/Incomes.png" width="200" /> | <img src="/lib/assets/screenshots/Pie.png" width="200" /> |
 
 ---
 
