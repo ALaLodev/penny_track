@@ -42,7 +42,7 @@ This ensures separation of concerns, decouples business logic from UI, and enhan
 
 ### Directory Structure
 
-```bash
+```text
 lib/
 ├── core/                  # Cross-cutting configuration (Router, Theme, DI, DB, Utils)
 ├── domain/                # Pure Business Rules (Entities and Contracts)
@@ -53,7 +53,6 @@ lib/
 │   └── ingresos/          # Complete Incomes Feature
 └── main.dart              # Entry point and dependency injection
 ```
-
 
 ---
 
@@ -120,6 +119,7 @@ If an unhandled exception occurs during login but the Firebase session is succes
 - Implementation of **FittedBox** and **VisualDensity** to ensure responsive UI across different screen sizes.
 - Advanced theme configuration to maintain dark-mode visual consistency while scrolling.
 
+---
 
 # 💰 Penny Track
 
