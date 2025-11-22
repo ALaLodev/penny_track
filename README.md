@@ -120,6 +120,7 @@ If an unhandled exception occurs during login but the Firebase session is succes
 - Advanced theme configuration to maintain dark-mode visual consistency while scrolling.
 
 ---
+---
 
 # 💰 Penny Track
 
