@@ -42,6 +42,7 @@ This ensures separation of concerns, decouples business logic from UI, and enhan
 
 ### Directory Structure
 
+```bash
 lib/
 ├── core/                  # Cross-cutting configuration (Router, Theme, DI, DB, Utils)
 ├── domain/                # Pure Business Rules (Entities and Contracts)
@@ -51,7 +52,7 @@ lib/
 │   ├── gastos/            # Complete Expenses Feature (Data, Domain, Presentation)
 │   └── ingresos/          # Complete Incomes Feature
 └── main.dart              # Entry point and dependency injection
-
+```
 
 
 ---
@@ -161,6 +162,8 @@ El proyecto sigue estrictamente los principios de **Clean Architecture** organiz
 
 ### Estructura de Directorios
 
+```bash
+
 lib/
 ├── core/                  # Configuración transversal (Router, Theme, DI, DB, Utils)
 ├── domain/                # Reglas de Negocio Puras (Entidades y Contratos)
@@ -170,6 +173,7 @@ lib/
 │   ├── gastos/            # Feature completa de Gastos (Data, Domain, Presentation)
 │   └── ingresos/          # Feature completa de Ingresos
 └── main.dart              # Punto de entrada e inyección de dependencias
+```
 
 
 # 📐 Patrones de Diseño Implementados
