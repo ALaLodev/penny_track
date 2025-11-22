@@ -1,6 +1,127 @@
 # 💰 Penny Track
 
-**Penny Track** es una aplicación móvil de gestión financiera personal desarrollada con **Flutter**. Este proyecto no es solo un gestor de gastos; es una implementación de referencia de una arquitectura de software robusta, escalable y segura, con un diseño UI/UX premium ("Dark Fintech").
+**Penny Track** is a personal finance management mobile app built with **Flutter**.  
+This project is not just an expense manager; it is a reference implementation of a robust, scalable, and secure software architecture with a “Dark Fintech” UI/UX design.
+
+The app allows users to record financial transactions, view monthly balances through interactive charts, and ensures multi-user data privacy through smart synchronization between cloud authentication and local persistence.
+
+---
+
+## 📱 Gallery
+
+<p align="center"> 
+    <img src="/lib/assets/screenshots/Login.png" alt="Login Screen" width="20%" style="margin-right: 40dp">  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+    <img src="/lib/assets/screenshots/Create_Acount2.png" alt="Create Account Screen" width="20%" style="margin-right: 40dp">  
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+    <img src="/lib/assets/screenshots/Home.png" alt="Home Screen" width="20%"><br>
+    <img src="/lib/assets/screenshots/Incomes.png" alt="Incomes Screen" width="20%">
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+    <img src="/lib/assets/screenshots/Pie.png" alt="Pie Chart Screen" width="20%"> 
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  
+    <img src="/lib/assets/screenshots/Close_session.png" alt="Close Session Screen" width="20%"> 
+<p>
+
+---
+
+## 🚀 Main Features
+
+* **Hybrid Authentication:** Full Login and Registration system connected to **Firebase Auth** (Email/Password and Google Sign-In ready), with user-friendly error handling.
+* **Transaction Management:** Full CRUD for Income and Expense entries, including categories and custom dates.
+* **Reactive Dashboard:** Unified view with instant toggling between expenses and incomes without unnecessary reloads.
+* **Data Visualization:** Interactive **Pie Charts** with month-to-month navigation for financial analysis.
+* **Multi-User Privacy:** Data architecture designed to isolate local information based on the Firebase UID.
+* **Premium UI/UX:** Custom “Onyx & Mint” theme based on Material 3, optimized for dark mode with smooth transitions and visual feedback.
+
+---
+
+## 🏗️ Project Architecture
+
+The project strictly follows **Clean Architecture** principles, organized by **Features**.  
+This ensures separation of concerns, decouples business logic from UI, and enhances scalability.
+
+### Directory Structure
+
+lib/
+├── core/ # Cross-cutting configuration (Router, Theme, DI, DB, Utils)
+├── domain/ # Pure Business Rules (Entities and Contracts)
+├── features/
+│ ├── auth/ # Authentication Logic (Cubit, Repo, UI)
+│ ├── dashboard/ # Main screen orchestrator and Charts
+│ ├── gastos/ # Complete Expenses Feature (Data, Domain, Presentation)
+│ └── ingresos/ # Complete Incomes Feature
+└── main.dart # Entry point and dependency injection
+
+
+---
+
+# 📐 Implemented Design Patterns
+
+The code makes extensive use of proven design patterns to solve common mobile development problems:
+
+## **BLoC / Cubit**
+Used for state management. It separates presentation logic from the UI, keeping widgets “dumb” and purely reactive to state changes.
+
+## **Repository Pattern**
+Abstracts the data source (Data Layer). The Domain layer doesn't know whether data comes from SQL, REST API, or memory, making it easy to swap sources in the future.
+
+## **Dependency Injection (DI)**
+Implemented with **get_it**. Allows injecting dependencies (UseCases inside Cubits, Repositories inside UseCases) in a decoupled way, facilitating unit testing.
+
+## **Adapter / Mapper**
+Pattern used to safely transform data between database models (Drift) and pure domain entities.
+
+## **Factory Pattern**
+Used in dependency injection to instantiate Cubits on demand.
+
+---
+
+# 💡 Key Technical Highlights
+
+## 1. Relational Database & Migrations
+Unlike simple key-value solutions, **Drift** was chosen to maintain relational integrity of financial data.
+
+### **Migration Strategy**
+A custom **MigrationStrategy** was implemented in `AppDatabase` to manage schema evolution  
+(e.g., adding the `userId` column in version 4) without losing data on existing devices.
+
+---
+
+## 2. Data Security & Isolation
+Even though the database is local (SQLite), the app simulates a secure multi-tenant environment.
+
+### **Dependency Injection**
+Repositories (`GastoRepositoryImpl`, `IngresoRepositoryImpl`) dynamically obtain the `currentUser.uid` from Firebase Auth.
+
+### **Automatic Filtering**
+All read/write queries inject or filter by this `uid`.  
+This mathematically guarantees that if two users log in sequentially on the same device,  
+they will **never see each other’s data**.
+
+---
+
+## 3. Authentication Robustness ("Safety Net")
+Advanced defensive logic was implemented in `AuthCubit` to handle inconsistencies between the native Android layer and Flutter (specifically type conflicts in Pigeon channels).
+
+### **Failsafe Logic**
+If an unhandled exception occurs during login but the Firebase session is successfully established in the background, the system performs a safety check that:
+
+- recovers the session.
+- grants access.
+- gracefully degrades the service instead of blocking the user.
+
+---
+
+## 4. Performance & UI Optimizations
+
+- Strict use of **constructors** to avoid unnecessary widget rebuilds.
+- Implementation of **FittedBox** and **VisualDensity** to ensure responsive UI across different screen sizes.
+- Advanced theme configuration to maintain dark-mode visual consistency while scrolling.
+
+
+# 💰 Penny Track
+
+**Penny Track** es una aplicación móvil de gestión financiera personal desarrollada con **Flutter**. Este proyecto no es solo un gestor de gastos; es una implementación de referencia de una arquitectura de software robusta, escalable y segura, con un diseño UI/UX "Dark Fintech".
 
 La aplicación permite registrar movimientos financieros, visualizar balances mensuales mediante gráficos interactivos y garantiza la privacidad de los datos multi-usuario mediante una sincronización inteligente entre autenticación en la nube y persistencia local.
 
@@ -98,14 +219,14 @@ Se implementó una lógica defensiva avanzada en el `AuthCubit` para manejar inc
 ### **Failsafe Logic**
 Si ocurre una excepción no controlada durante el proceso de login pero la sesión de Firebase se establece correctamente en segundo plano, el sistema realiza una comprobación de seguridad que:
 
-- recupera la sesión,
-- permite el acceso,
+- recupera la sesión.
+- permite el acceso.
 - degrada el servicio elegantemente en lugar de bloquear al usuario.
 
 ---
 
 ## 4. Optimización de Rendimiento y UI
 
-- Uso estricto de **constructores `const`** para evitar reconstrucciones innecesarias.
+- Uso estricto de **constructores** para evitar reconstrucciones innecesarias.
 - Implementación de **FittedBox** y **VisualDensity** para una UI responsiva en diferentes pantallas.
-- Configuración avanzada del tema (`scrolledUnderElevation: 0`) para mantener la consistencia visual del modo oscuro al hacer scroll.
+- Configuración avanzada del tema para mantener la consistencia visual del modo oscuro al hacer scroll.
