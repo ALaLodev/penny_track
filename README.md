@@ -14,9 +14,7 @@ La aplicación permite registrar movimientos financieros, visualizar balances me
   <img src="/lib/assets/screenshots/Create_Acount2.png" alt="Create acount Screen" width="20%" style="margin-right: 40dp">  
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- 10 non-breaking spaces -->  
   <img src="/lib/assets/screenshots/Home.png" alt="Home Screen" width="20%"> 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- 10 non-breaking spaces -->  
-  <img src="/lib/assets/screenshots/Incomes.png" alt="Incomes Screen" width="20%">
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- 10 non-breaking spaces -->  
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!-- 10 non-breaking spaces --> 
   <img src="/lib/assets/screenshots/Pie.png" alt="Pie Screen" width="20%"> 
 <p>
 ---
