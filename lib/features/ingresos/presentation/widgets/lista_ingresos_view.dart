@@ -24,7 +24,6 @@ class ListaIngresosView extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
               itemBuilder: (context, index) {
                 final ingreso = ingresos[index];
-
                 return Card(
                   child: ListTile(
                     contentPadding: const EdgeInsets.symmetric(
